@@ -1,0 +1,47 @@
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title">Configuration
+            <button (click)="configCollapsed = !configCollapsed"
+                    class="btn btn-primary btn-sm float-end">{{
+                    configCollapsed ? "Show" : "Hide"
+                }}
+            </button>
+        </h4>
+
+        <div [(ngbCollapse)]="configCollapsed">
+            <form (ngSubmit)="dataSubmit($event)">
+                <div class="mb-3">
+                    <label class="form-label">Notion API Key <span class="text-small">(<a target="_blank"
+                                                                                          rel="noopener noreferrer"
+                                                                                          href="https://www.notion.so/my-integrations">Click here to create integration and get API key</a>)</span></label>
+                    <input name="notionApiKey" type="text" class="form-control" id="notionApiKey">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Notion Database ID
+                        <span class="text-small">(Add integration to your database)</span></label>
+                    <input name="notionDocumentId" type="text" class="form-control" id="notionDocumentId"
+                           placeholder="Keep empty to create new document">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Steam User ID</label>
+                    <input type="text" class="form-control" id="steamUserId" name="steamUserId"
+                           aria-describedby="basic-addon3">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Steam API key <span class="text-small">(<a target="_blank"
+                                                                                         rel="noopener noreferrer"
+                                                                                         href="https://steamcommunity.com/dev/apikey">Click here to get API key</a>)</span></label>
+
+                    <input type="text" class="form-control" id="steamApiKey" name="steamApiKey">
+
+                </div>
+
+                <button class="button btn btn-primary float-end" type="submit">Submit</button>
+            </form>
+
+        </div>
+    </div>
+</div>

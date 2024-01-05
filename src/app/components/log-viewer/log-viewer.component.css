@@ -1,0 +1,9 @@
+.message-time{
+  margin-right: 0.5em;
+  font-weight: bold;
+}
+
+#log-list{
+  height: 20em;
+  overflow-y: scroll;
+}

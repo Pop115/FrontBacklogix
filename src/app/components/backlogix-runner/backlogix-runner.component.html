@@ -1,0 +1,33 @@
+<div class="card">
+
+    <div class="card-body">
+        <h4 class="card-title">Backlogix
+            <button (click)="runnerCollapsed = !runnerCollapsed" class="btn btn-primary btn-sm float-end">{{
+                    runnerCollapsed ? "Show" : "Hide"
+                }}
+            </button>
+        </h4>
+        <div [(ngbCollapse)]="runnerCollapsed">
+            <div class="mb-3">
+                <div id="actionsDiv" class="m-1" [hidden]="isRunning">
+                    <h4 class="mb-2 fw-bold">Actions</h4>
+
+                    <h5>Steam</h5>
+                    <button class="btn btn-primary me-2">Add Steam library to database</button>
+                    <button class="btn btn-primary">Add Steam wishlist to database</button>
+                    <hr>
+                    <h5>Other</h5>
+                    <button (click)="fillMissingData()" class="btn btn-primary me-2">Fill missing data</button>
+                </div>
+                <div class="m-1" [hidden]="!isAppChoiceOpened">
+                    <h4 class="mb-2 fw-bold">Multiple Steam games found for "{{currentAppChoiceName}}"</h4>
+                    <button *ngFor="let appChoice of appChoices" (click)="chooseAppId(appChoice)"
+                            class="btn btn-outline-primary">
+                        {{appChoice.name}}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

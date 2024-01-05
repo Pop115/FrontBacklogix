@@ -1,0 +1,21 @@
+<div class="card">
+
+    <div class="card-body">
+        <h4 class="card-title">Logs
+            <button (click)="logsCollapsed = !logsCollapsed" class="btn btn-primary btn-sm float-end">{{
+                    logsCollapsed ? "Show" : "Hide"
+                }}
+            </button>
+        </h4>
+        <div [(ngbCollapse)]="logsCollapsed">
+            <div class="mb-3">
+                <ul id="log-list" class="list-group">
+                    <li *ngFor="let log of logList" class="list-group-item"><span
+                            class="message-time">[{{ log.messageTime | date : 'shortTime' }}]</span>{{ log.message }}
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+</div>
