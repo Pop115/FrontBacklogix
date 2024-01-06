@@ -12,6 +12,7 @@ export class SteamService {
     private steamAppList?: SteamAppList;
 
     constructor(private http: HttpClient, private loggerService: LoggerService) {
+        console.log("Steam service init")
     }
 
     initSteam(steamApiKey: string, steamUserId : string) {
@@ -26,7 +27,7 @@ export class SteamService {
         this.loggerService.addLog(`Retrieving games using Steam API...`)
         return new Promise(resolve => {
             this.http.post<SteamAppList>(this.STEAM_LOCAL_API_URL + "/steamGames", queryBody, {}).subscribe(response => {
-                this.loggerService.addLog("Retrieved games from Steam");
+                this.loggerService.addLog(`Retrieved ${response.applist.apps.length} games from Steam`);
                 this.steamAppList = response;
                 console.log(response);
                 resolve(response);
@@ -40,19 +41,20 @@ export class SteamService {
             steamUserId: this.steamUserId
         }
 
-        this.loggerService.addLog(`Retrieving game info using Steam API...`);
+        this.loggerService.addLog(`Retrieving game info ${appId} using Steam API...`);
         return new Promise(resolve => {
-            this.http.post<SteamAppList>(this.STEAM_LOCAL_API_URL + "/gameInfo", queryBody, {}).subscribe(response => {
-                this.loggerService.addLog("Retrieved game info from Steam");
-                this.steamAppList = response;
+            this.http.post(this.STEAM_LOCAL_API_URL + "/gameInfo", queryBody, {}).subscribe(response => {
+                this.loggerService.addLog(`Retrieved game info ${appId} from Steam`);
                 console.log(response);
+                //TODO fill notion with retrieved info
+                // tags = []
+                // date = data.get("release_date", {}).get("date")
+                // price = data.get("price_overview", {}).get("final_formatted")
                 resolve(response);
             });
         });
 
-        // tags = []
-        // date = data.get("release_date", {}).get("date")
-        // price = data.get("price_overview", {}).get("final_formatted")
+
     }
 
     getAppIdFromName(name: string): SteamAppId[] | null {
@@ -62,8 +64,13 @@ export class SteamService {
         const pattern = new RegExp(".*" + name + ".*", 'i');
         const exclude_patterns = patterns_to_exclude.map(exclude => new RegExp(exclude, 'i'));
 
+        if(!this.steamAppList || !this.steamAppList.applist){
+            console.log("ERROR : Steam app list not retrieved");
+            return null;
+        }
 
-        const matches = this.steamAppList?.applist.apps.filter(app => {
+        console.log("steamapplist", this.steamAppList.applist)
+        const matches = this.steamAppList.applist.apps.filter(app => {
             return app.name && pattern.test(app.name) && !exclude_patterns.some(exclude => exclude.test(app.name!))
         })
         console.log("matches", matches);

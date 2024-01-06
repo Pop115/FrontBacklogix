@@ -7,7 +7,7 @@ import {
     RichTextItemResponse,
     TextRichTextItemResponse
 } from "@notionhq/client/build/src/api-endpoints";
-import {NotionGameObject} from "../../models/notion-game-object.model";
+import {NotionGameObject, NotionGameObjectTextProperty} from "../../models/notion-game-object.model";
 import {SteamService} from "../../services/steam.service";
 import {SteamAppId} from "../../models/steam-app-list.model";
 import {Observable, of} from "rxjs";
@@ -33,7 +33,7 @@ export class BacklogixRunnerComponent {
     isRunning = false;
 
     //App id selection
-    currentAppChoiceName? : string;
+    currentAppChoiceName?: string;
     isAppChoiceOpened = false;
     appChoices: SteamAppId[] = [];
     waitForAppChoiceResolver: any;
@@ -50,17 +50,23 @@ export class BacklogixRunnerComponent {
         await this.steamService.retrieveSteamGames()
 
         for (const response of this.notionService.gamesDatabase.results) {
-            let gameObject: NotionGameObject = new NotionGameObject(response);
+            let gameObject: NotionGameObject = Object.assign(new NotionGameObject(), response)
+            console.log(gameObject.getNotionName())
             if (!gameObject || !gameObject.properties || !gameObject.id)
                 return;
             let originalProperties = structuredClone(gameObject.properties);
 
-            if (!gameObject.properties.steam_app_id || !gameObject.properties.steam_app_id.number || gameObject.properties.steam_app_id.number == 0)
-                await this.fillSteamAppId(gameObject);
+            //"Empty platform" or "On Steam but empty steam app id"
+            if (!gameObject.Platform.getContent() || gameObject.Platform.getContent() == "Steam") {
+                if (!gameObject.properties.steam_app_id || !gameObject.properties.steam_app_id.number || gameObject.properties.steam_app_id.number == 0)
+                    await this.fillSteamAppId(gameObject);
 
+                if (gameObject.properties.steam_app_id.number != 0)
+                    gameObject.Platform.setContent("Steam");
+            }
 
-            if(gameObject.properties.Platform.getContent() == "Steam"){
-
+            if (gameObject.Platform.getContent() == "Steam") {
+                await this.steamService.retrieveGameInfo(gameObject.properties.steam_app_id.number!)
             }
 
             //TODO check if it has 1 missing property, skip if everything is already filled
@@ -89,7 +95,7 @@ export class BacklogixRunnerComponent {
 
         if (appId && appId.appid && gameObject.properties) {
             gameObject.properties.steam_app_id.number = appId.appid
-            gameObject.properties.Platform.setContent("Steam")
+            gameObject.Platform.setContent("Steam");
             this.loggerService.addLog(gameObject.getNotionName() + " associated with Steam game " + appId.name + " with id " + appId.appid);
         }
     }
@@ -101,7 +107,7 @@ export class BacklogixRunnerComponent {
         this.waitForAppChoiceResolver(appChoice);
     }
 
-    private waitForAppIdChoice(gameObject : NotionGameObject, appChoices: SteamAppId[]) {
+    private waitForAppIdChoice(gameObject: NotionGameObject, appChoices: SteamAppId[]) {
         this.isAppChoiceOpened = true;
         this.appChoices = appChoices;
         this.currentAppChoiceName = gameObject.getNotionName();

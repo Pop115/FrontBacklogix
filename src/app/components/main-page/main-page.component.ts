@@ -8,6 +8,7 @@ import {LoggerService} from "../../services/logger.service";
 import {BacklogixRunnerComponent} from "../backlogix-runner/backlogix-runner.component";
 import {QueryDatabaseResponse} from "@notionhq/client/build/src/api-endpoints";
 import {SteamService} from "../../services/steam.service";
+import {NotionDatabaseResponse} from "../../models/notion-game-object.model";
 
 @Component({
     selector: 'main-page',
@@ -19,7 +20,7 @@ import {SteamService} from "../../services/steam.service";
     ],
     templateUrl: './main-page.component.html',
     styleUrl: './main-page.component.css',
-    providers: [LoggerService, HttpClientModule]
+    providers: [HttpClientModule]
 })
 export class MainPageComponent {
 
@@ -46,8 +47,8 @@ export class MainPageComponent {
         if (this.configuration) {
             this.notionService.initNotion(this.configuration.notionApiKey);
             if (this.configuration.notionDocumentId) {
-                this.notionService.retrieveDatabase(this.configuration.notionDocumentId).then((response: QueryDatabaseResponse) => {
-                    this.loggerService.addLog(`Database contains ${response.results.length} games`)
+                this.notionService.retrieveDatabase(this.configuration.notionDocumentId).then((response: NotionDatabaseResponse) => {
+                    this.loggerService.addLog(`Database contains ${response.results?.length} games`)
 
                 });
             } else {

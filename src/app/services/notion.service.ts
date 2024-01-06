@@ -3,6 +3,7 @@ import {Injectable} from "@angular/core";
 import {LoggerService} from "./logger.service";
 import {DatabaseObjectResponse, QueryDatabaseResponse} from "@notionhq/client/build/src/api-endpoints";
 import {Subscription} from "rxjs";
+import {NotionDatabaseResponse, NotionGameObject} from "../models/notion-game-object.model";
 
 @Injectable({providedIn: 'root'})
 export class NotionService {
@@ -10,7 +11,7 @@ export class NotionService {
 
     private notionDatabaseId?: string;
     private notionApiKey?: string;
-    public gamesDatabase?: QueryDatabaseResponse;
+    public gamesDatabase?: NotionDatabaseResponse;
 
     constructor(private http: HttpClient, private loggerService: LoggerService) {
     }
@@ -19,7 +20,7 @@ export class NotionService {
         this.notionApiKey = notionApiKey;
     }
 
-    retrieveDatabase(databaseId: string): Promise<QueryDatabaseResponse> {
+    retrieveDatabase(databaseId: string): Promise<NotionDatabaseResponse> {
         this.notionDatabaseId = databaseId;
         let queryBody = {
             databaseId: databaseId,
@@ -28,7 +29,7 @@ export class NotionService {
 
         this.loggerService.addLog(`Retrieving database using Notion API...`)
         return new Promise(resolve => {
-            this.http.post<QueryDatabaseResponse>(this.NOTION_LOCAL_API_URL + "/database", queryBody, {}).subscribe(data => {
+            this.http.post<NotionDatabaseResponse>(this.NOTION_LOCAL_API_URL + "/database", queryBody, {}).subscribe(data => {
                 this.loggerService.addLog("Retrieved database from Notion")
                 this.gamesDatabase = data;
                 console.log(data);
@@ -56,8 +57,8 @@ export class NotionService {
 
     getGameNames(): string[] {
         if (this.gamesDatabase) {
-            return this.gamesDatabase.results.map((databaseObject: DatabaseObjectResponse | any) => {
-                return databaseObject.properties.Name.title[0].text.content
+            return this.gamesDatabase.results!.map((databaseObject: NotionGameObject) => {
+                return databaseObject.properties!.Name.title[0].plain_text;
             });
         }
         return []
