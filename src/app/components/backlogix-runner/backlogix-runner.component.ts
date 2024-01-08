@@ -7,13 +7,14 @@ import {
     RichTextItemResponse,
     TextRichTextItemResponse
 } from "@notionhq/client/build/src/api-endpoints";
-import {NotionGameObject, NotionGameObjectTextProperty} from "../../models/notion-game-object.model";
+import {NotionGameObject} from "../../models/notion-game-object.model";
 import {SteamService} from "../../services/steam.service";
 import {SteamAppId} from "../../models/steam-app-list.model";
 import {Observable, of} from "rxjs";
 import {LoggerService} from "../../services/logger.service";
 import {app} from "../../../../server";
 import _ from "lodash";
+import {NotionGameObjectTextProperty} from "../../models/notion-game-object-text.property";
 
 @Component({
     selector: 'backlogix-runner',
@@ -65,8 +66,15 @@ export class BacklogixRunnerComponent {
                     gameObject.Platform.setContent("Steam");
             }
 
+            console.log(gameObject.Platform.getContent())
             if (gameObject.Platform.getContent() == "Steam") {
-                await this.steamService.retrieveGameInfo(gameObject.properties.steam_app_id.number!)
+                let gameInfo = await this.steamService.retrieveGameInfo(gameObject.properties.steam_app_id.number!);
+                //gameObject.Rel
+                //TODO fill notion with retrieved info
+                // tags = []
+                // date = data.get("release_date", {}).get("date")
+                // price = data.get("price_overview", {}).get("final_formatted")
+
             }
 
             //TODO check if it has 1 missing property, skip if everything is already filled

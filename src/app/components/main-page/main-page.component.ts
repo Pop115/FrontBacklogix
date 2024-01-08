@@ -8,7 +8,8 @@ import {LoggerService} from "../../services/logger.service";
 import {BacklogixRunnerComponent} from "../backlogix-runner/backlogix-runner.component";
 import {QueryDatabaseResponse} from "@notionhq/client/build/src/api-endpoints";
 import {SteamService} from "../../services/steam.service";
-import {NotionDatabaseResponse} from "../../models/notion-game-object.model";
+
+import {NotionDatabaseResponse} from "../../models/notion-database.response";
 
 @Component({
     selector: 'main-page',

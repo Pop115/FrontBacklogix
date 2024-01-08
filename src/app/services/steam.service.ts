@@ -46,10 +46,6 @@ export class SteamService {
             this.http.post(this.STEAM_LOCAL_API_URL + "/gameInfo", queryBody, {}).subscribe(response => {
                 this.loggerService.addLog(`Retrieved game info ${appId} from Steam`);
                 console.log(response);
-                //TODO fill notion with retrieved info
-                // tags = []
-                // date = data.get("release_date", {}).get("date")
-                // price = data.get("price_overview", {}).get("final_formatted")
                 resolve(response);
             });
         });

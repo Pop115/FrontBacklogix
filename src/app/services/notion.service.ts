@@ -3,7 +3,8 @@ import {Injectable} from "@angular/core";
 import {LoggerService} from "./logger.service";
 import {DatabaseObjectResponse, QueryDatabaseResponse} from "@notionhq/client/build/src/api-endpoints";
 import {Subscription} from "rxjs";
-import {NotionDatabaseResponse, NotionGameObject} from "../models/notion-game-object.model";
+import {NotionGameObject} from "../models/notion-game-object.model";
+import {NotionDatabaseResponse} from "../models/notion-database.response";
 
 @Injectable({providedIn: 'root'})
 export class NotionService {

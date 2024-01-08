@@ -1,38 +1,11 @@
 import {
-    CheckboxPropertyItemObjectResponse, DatabaseObjectResponse,
-    DatePropertyItemObjectResponse,
+    CheckboxPropertyItemObjectResponse,
     MultiSelectPropertyItemObjectResponse,
     NumberPropertyItemObjectResponse,
-    PageObjectResponse,
-    PartialDatabaseObjectResponse,
-    PartialPageObjectResponse,
     RichTextItemResponse,
 } from "@notionhq/client/build/src/api-endpoints";
-
-export class NotionGameObjectTextProperty {
-    id?: string;
-    rich_text?: [
-        {
-            "text": { "content": string }
-        }
-    ];
-    type?: "rich_text";
-
-    public setContent(content: string) {
-
-        if (this.rich_text) {
-            if (this.rich_text[0] != null) {
-                this.rich_text[0].text.content = content;
-            } else {
-                this.rich_text = [{"text": {"content": content}}];
-            }
-        }
-    }
-
-    public getContent() {
-        return this.rich_text && this.rich_text.length > 0 ? this.rich_text[0].text.content : null;
-    }
-}
+import {NotionGameObjectTextProperty} from "./notion-game-object-text.property";
+import {NotionGameObjectDateProperty} from "./notion-game-object-date.property";
 
 export class NotionGameObject {
     id?: string;
@@ -46,15 +19,11 @@ export class NotionGameObject {
         "Owned": CheckboxPropertyItemObjectResponse
         "Platform": NotionGameObjectTextProperty
         "Price": NumberPropertyItemObjectResponse
-        "Release Date": DatePropertyItemObjectResponse
+        "Release Date": NotionGameObjectDateProperty
         "Scorix": NumberPropertyItemObjectResponse
         "Tags": MultiSelectPropertyItemObjectResponse,
         "steam_app_id": NumberPropertyItemObjectResponse
     }
-
-    // constructor(pageObject: PageObjectResponse | PartialPageObjectResponse | PartialDatabaseObjectResponse | DatabaseObjectResponse) {
-    //     Object.assign(this, pageObject);
-    // }
 
     constructor() {
 
@@ -64,9 +33,9 @@ export class NotionGameObject {
         return Object.assign(new NotionGameObjectTextProperty(), this.properties?.Platform);
     }
 
-    // set Platform(platform : string){
-    //
-    // }
+    get ReleaseDate() {
+        return Object.assign(new NotionGameObjectDateProperty(), this.properties?.["Release Date"]);
+    }
 
     getNotionName() {
         return this.properties?.Name.title[0].plain_text;
@@ -101,6 +70,3 @@ export class NotionGameObject {
     }
 }
 
-export class NotionDatabaseResponse {
-    results?: Array<NotionGameObject>;
-}
